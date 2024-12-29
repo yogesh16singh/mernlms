@@ -125,7 +125,6 @@ export const getSingleCourse = CatchAsyncError(
 // get all course --- without purchasing
 export const getAllCourses = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("all couses")
     try {
       // const isChacheExist = await redis.get("allCourses")
       // if (isChacheExist) {
@@ -135,63 +134,10 @@ export const getAllCourses = CatchAsyncError(
       //         courses
       //     })
       // } else {
-      let courses = await CourseModel.find().select(
+      const courses = await CourseModel.find().select(
         "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
       );
-      if(courses?.length===0){
-       courses= [ {
-        name: "Full Stack Web Development",
-        description: "Learn to build web applications using the MERN stack.",
-        categories: "Web Development",
-        price: 499,
-        estimatedPrice: 599,
-        thumbnail: {
-          public_id: "thumbnail_12345",
-          url: "https://i.ytimg.com/vi/F5EYXc91Cpo/hqdefault.jpg?sqp=-oaymwEXCNACELwBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLASXaDMyOK64gj5Bs8QLjCydV46Bw",
-        },
-        tags: "MERN, Full Stack, Web Development",
-        level: "Intermediate",
-        demoUrl: "https://www.youtube.com/watch?v=F5EYXc91Cpo&list=PLXXI5Oe3aCLky2lAcxpwwqAOCFF-uRpnk",
-        benefits: [
-          { title: "Build real-world projects" },
-          { title: "Master MERN stack" },
-          { title: "Job-ready skills" },
-        ],
-        prerequisites: [
-          { title: "Basic HTML, CSS, and JavaScript knowledge" },
-          { title: "Familiarity with Git and GitHub" },
-        ],
-        courseData: [
-          {
-            title: "Introduction to MERN Stack",
-            description: "An overview of MongoDB, Express, React, and Node.js.",
-            videoUrl: "https://example.com/videos/intro-mern",
-            videoThumbnail: {
-              public_id: "thumb_12345",
-              url: "https://example.com/thumbnails/intro.jpg",
-            },
-            videoSection: "Getting Started",
-            videoLength: 300,
-            videoPlayer: "HTML5 Player",
-            
-            suggestion: "Practice setting up a MERN stack environment locally.",
-            questions: [
-              {
-                user: { name: "Student A", email: "studentA@example.com" },
-                question: "Can I use TypeScript with MERN?",
-                questionReplies: [
-                  {
-                    user: { name: "Instructor", email: "instructor@example.com" },
-                    question: "Yes, TypeScript is compatible. Here's a guide.",
-                  },
-                ],
-              },
-            ],
-          }
-        ],
-        ratings: 4.5,
-        purchased: 120,
-      }]}
+
       await redis.set("allCourses", JSON.stringify(courses));
 
       res.status(200).json({
